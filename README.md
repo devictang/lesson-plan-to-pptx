@@ -35,37 +35,26 @@ vercel dev
 
 ## 📖 教案格式
 
-教案必須使用以下結構化 Markdown 格式：
+每個 `## ` 代表一張 Slide，第一個 `## ` 為封面：
 
 ```markdown
 # 教學主題：XXX
 
-## 基本資訊
+## 封面 — XXX
 - **科目**：XXX
 - **年級**：XXX
 - **時間**：XX 分鐘
-- **課題**：XXX
 
-## 教學目標
-1. XXX
-2. XXX
+## Slide 標題
+1. 列表項目一
+2. 列表項目二
 
-## 教學資源
-- XXX
+## Slide 標題
+段落文字內容…
 
-## 教學流程
-
-### 導入活動（X 分鐘）
-XXX
-
-### 發展活動（X 分鐘）
-XXX
-
-### 總結活動（X 分鐘）
-XXX
-
-## 評估方法
-- XXX
+## Slide 標題
+- 項目符號一
+- 項目符號二
 ```
 
 📋 完整格式指引及 AI 指令：[PROMPT_INSTRUCTION.md](./PROMPT_INSTRUCTION.md)

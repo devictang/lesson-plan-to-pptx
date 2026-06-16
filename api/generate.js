@@ -44,79 +44,70 @@ const THEMES = {
 };
 
 /* ───────────────────────────────────────────
-   MARKDOWN PARSER
+   MARKDOWN PARSER — Slide-by-Slide
    ─────────────────────────────────────────── */
 
+/**
+ * Parses structured markdown into slide-level objects.
+ * 
+ * Rules:
+ *  - `# ...` line  → presentation title (used for filename + title slide)
+ *  - `## ...` line → new slide boundary (slide title)
+ *  - Everything between `##` lines → that slide's content
+ *  - First `##` slide → rendered as Title Slide (dark bg, big type)
+ *  - Every subsequent `##` slide → Content Slide (light bg)
+ *  - Content slides auto-detect lists (`1. ` / `- `) and render with
+ *    number circles or bullet dots; plain text is rendered as prose.
+ */
 function parseLessonPlan(text) {
-  const result = {
-    title: "",
-    meta: {},
-    objectives: [],
-    materials: [],
-    procedures: [],
-    assessment: [],
-    reflection: "",
-  };
-
   const lines = text.split("\n");
 
-  // Extract title from the first `# ` line
-  const titleLine = lines.find((l) => /^#\s+/.test(l));
-  if (titleLine) {
-    result.title = titleLine.replace(/^#\s+/, "").trim();
-    // Strip common prefix labels like "教學主題：" or "主題："
-    result.title = result.title.replace(
-      /^(教學主題|主題|課題|單元)[：:]\s*/,
-      ""
-    );
+  // Extract presentation-level title from first `# ` line
+  let title = "";
+  for (const line of lines) {
+    if (/^#\s+/.test(line)) {
+      title = line.replace(/^#\s+/, "").trim();
+      break;
+    }
   }
 
-  // Split text into sections by `## ` headers
-  const sectionRE = /^##\s+(.+)$/;
-  let sections = [];
-  let currentHeader = null;
-  let currentLines = [];
+  // Extract slides: each `## ` opens a new slide
+  const slides = [];
+  let currentSlide = null;
 
   for (const line of lines) {
-    const m = line.match(sectionRE);
-    if (m) {
-      if (currentHeader) {
-        sections.push({ header: currentHeader, content: currentLines.join("\n") });
+    const h2Match = line.match(/^##\s+(.+)/);
+    if (h2Match) {
+      // Save previous slide
+      if (currentSlide) {
+        currentSlide.content = currentSlide.content.trim();
+        slides.push(currentSlide);
       }
-      currentHeader = m[1].trim();
-      currentLines = [];
-    } else if (currentHeader) {
-      currentLines.push(line);
-    }
-  }
-  if (currentHeader) {
-    sections.push({ header: currentHeader, content: currentLines.join("\n") });
-  }
-
-  // Parse each section
-  for (const sec of sections) {
-    const h = sec.header;
-    const c = sec.content.trim();
-
-    if (/基本[資资]訊/.test(h)) {
-      result.meta = parseKeyValuePairs(c);
-    } else if (/教學目標|學習目標|課程目標/.test(h)) {
-      result.objectives = parseNumberedList(c);
-    } else if (/教學資源|教材|教具|準備/.test(h)) {
-      result.materials = parseBulletList(c);
-    } else if (/教學流程|教學過程|教學活動|教學步驟/.test(h)) {
-      result.procedures = parseProcedures(c);
-    } else if (/評估|評量/.test(h)) {
-      result.assessment = parseBulletList(c);
-    } else if (/反思|檢討|備註/.test(h)) {
-      result.reflection = c;
+      currentSlide = { title: h2Match[1].trim(), content: "" };
+    } else if (currentSlide) {
+      currentSlide.content += line + "\n";
     }
   }
 
-  return result;
+  // Don't forget the last slide
+  if (currentSlide) {
+    currentSlide.content = currentSlide.content.trim();
+    slides.push(currentSlide);
+  }
+
+  // Fallback: if no `# ` title found, use first slide's title
+  if (!title && slides.length > 0) {
+    title = slides[0].title;
+  }
+
+  return { title, slides };
 }
 
-/** Parse lines like `- **科目**：中國歷史` into { "科目": "中國歷史" } */
+/* ───────────────────────────────────────────
+   CONTENT PARSING HELPERS
+   ─────────────────────────────────────────── */
+
+/** Parse `- **key**：value` pairs into { key: value } */
 function parseKeyValuePairs(text) {
   const kv = {};
   const re = /[-*]\s*\*{0,2}([^*：:]+)\*{0,2}[：:]\s*(.+)/;
@@ -127,55 +118,44 @@ function parseKeyValuePairs(text) {
   return kv;
 }
 
-/** Parse `1. item\n2. item` or `- item` into string array */
-function parseNumberedList(text) {
+/**
+ * Detect list items in slide content.
+ * Returns array of { type: 'number'|'bullet', text: string }.
+ * If fewer than 2 list lines found, returns empty (fall back to plain text).
+ */
+function detectListItems(content) {
+  const lines = content.split("\n");
   const items = [];
-  for (let line of text.split("\n")) {
-    line = line.trim();
-    // Match "1. ...", "2. ...", or "- ...", or "* ..."
-    const m = line.match(/^(?:\d+[.)]\s*|[-*]\s+)(.+)/);
-    if (m) items.push(m[1].trim());
-  }
-  return items;
-}
-
-/** Parse bullet list into string array */
-function parseBulletList(text) {
-  return parseNumberedList(text);
-}
-
-/** Parse `### Step Title\ncontent` into structured steps */
-function parseProcedures(text) {
-  const steps = [];
-  const lines = text.split("\n");
-  let current = null;
+  let plainLines = 0;
 
   for (const line of lines) {
-    const subMatch = line.match(/^###\s+(.+)/);
-    if (subMatch) {
-      if (current) steps.push(current);
-      current = { title: subMatch[1].trim(), content: "" };
-    } else if (current) {
-      const trimmed = line.trim();
-      if (trimmed) {
-        current.content += (current.content ? "\n" : "") + trimmed;
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    const numMatch = trimmed.match(/^\d+[.)]\s+(.+)/);
+    const bulletMatch = trimmed.match(/^[-*]\s+(.+)/);
+
+    if (numMatch) {
+      items.push({ type: "number", text: numMatch[1] });
+    } else if (bulletMatch) {
+      items.push({ type: "bullet", text: bulletMatch[1] });
+    } else {
+      plainLines++;
+      // If there's a preceding item, append as continuation
+      if (items.length > 0 && !trimmed.match(/^[-*\d]/)) {
+        items[items.length - 1].text += " " + trimmed;
+        plainLines--; // don't count continuation as separate plain line
       }
     }
   }
-  if (current) steps.push(current);
 
-  // If no ### subheaders found, split by double newline as fallback
-  if (steps.length === 0 && text.trim()) {
-    const chunks = text.split(/\n\n+/).filter(Boolean);
-    chunks.forEach((chunk, i) => {
-      const lines = chunk.trim().split("\n");
-      const title = lines[0].replace(/^[-*\d.]+\s*/, "");
-      const content = lines.slice(1).join("\n").trim();
-      steps.push({ title, content: content || chunk.trim() });
-    });
+  // Only use list mode if the majority of non-empty lines are list items
+  const totalLines = items.length + plainLines;
+  if (items.length < 2 || items.length < totalLines * 0.5) {
+    return [];
   }
 
-  return steps;
+  return items;
 }
 
 /* ───────────────────────────────────────────
@@ -197,55 +177,29 @@ function generatePptx(parsed, themeKey) {
 
   let slideNum = 0;
 
-  // ─── SLIDE 1: TITLE ─────────────────────────
-  createTitleSlide(pptx, parsed, t, ++slideNum);
-
-  // ─── SLIDE 2: OBJECTIVES ────────────────────
-  if (parsed.objectives.length > 0) {
-    createIconListSlide(pptx, {
-      title: "教學目標",
-      items: parsed.objectives,
-      iconType: "number",
-      theme: t,
-      slideNum: ++slideNum,
+  if (parsed.slides.length === 0) {
+    // Empty input — just title + end
+    createTitleSlide(pptx, parsed.title, null, t, ++slideNum);
+  } else {
+    parsed.slides.forEach((slideData, idx) => {
+      if (idx === 0) {
+        // First slide = Title Slide (dark background)
+        createTitleSlide(pptx, parsed.title, slideData, t, ++slideNum);
+      } else {
+        // Content slide (auto-detect list vs prose)
+        createContentSlide(pptx, slideData, t, ++slideNum);
+      }
     });
   }
 
-  // ─── SLIDE 3: MATERIALS ─────────────────────
-  if (parsed.materials.length > 0) {
-    createIconListSlide(pptx, {
-      title: "教學資源",
-      items: parsed.materials,
-      iconType: "bullet",
-      theme: t,
-      slideNum: ++slideNum,
-    });
-  }
-
-  // ─── SLIDES 4+: PROCEDURES ──────────────────
-  parsed.procedures.forEach((step, idx) => {
-    createProcedureSlide(pptx, step, t, ++slideNum, idx + 1, parsed.procedures.length);
-  });
-
-  // ─── ASSESSMENT ────────────────────────────
-  if (parsed.assessment.length > 0) {
-    createIconListSlide(pptx, {
-      title: "評估方法",
-      items: parsed.assessment,
-      iconType: "bullet",
-      theme: t,
-      slideNum: ++slideNum,
-    });
-  }
-
-  // ─── END SLIDE ─────────────────────────────
+  // Always append End Slide
   createEndSlide(pptx, t, ++slideNum);
 
   return pptx;
 }
 
 /* ── TITLE SLIDE ── */
-function createTitleSlide(pptx, parsed, t, slideNum) {
+function createTitleSlide(pptx, presentationTitle, slideData, t, slideNum) {
   const slide = pptx.addSlide();
   slide.background = { fill: t.primary };
 
@@ -267,8 +221,9 @@ function createTitleSlide(pptx, parsed, t, slideNum) {
     fill: { color: t.secondary, transparency: 70 },
   });
 
-  // Title
-  slide.addText(parsed.title || "教案", {
+  // Display title: use slide title if available, else presentation title
+  const displayTitle = (slideData && slideData.title) || presentationTitle || "教案";
+  slide.addText(displayTitle, {
     x: MARGIN,
     y: 1.6,
     w: 9.5,
@@ -281,7 +236,7 @@ function createTitleSlide(pptx, parsed, t, slideNum) {
     valign: "middle",
   });
 
-  // Subtitle accent line
+  // Accent line
   slide.addShape(pptx.shapes.RECTANGLE, {
     x: MARGIN,
     y: 3.5,
@@ -290,32 +245,33 @@ function createTitleSlide(pptx, parsed, t, slideNum) {
     fill: { color: t.accent },
   });
 
-  // Meta info
-  const metaParts = [];
-  if (parsed.meta["科目"] || parsed.meta["學科"]) metaParts.push(parsed.meta["科目"] || parsed.meta["學科"]);
-  if (parsed.meta["年級"] || parsed.meta["班級"]) metaParts.push(parsed.meta["年級"] || parsed.meta["班級"]);
-  if (parsed.meta["時間"] || parsed.meta["課時"]) metaParts.push(parsed.meta["時間"] || parsed.meta["課時"]);
+  // Meta info from first slide's key-value pairs
+  if (slideData && slideData.content) {
+    const meta = parseKeyValuePairs(slideData.content);
+    const metaParts = [];
+    if (meta["科目"] || meta["學科"]) metaParts.push(meta["科目"] || meta["學科"]);
+    if (meta["年級"] || meta["班級"]) metaParts.push(meta["年級"] || meta["班級"]);
+    if (meta["時間"] || meta["課時"]) metaParts.push(meta["時間"] || meta["課時"]);
 
-  if (metaParts.length > 0) {
-    slide.addText(metaParts.join("  ·  "), {
-      x: MARGIN,
-      y: 3.85,
-      w: 9.5,
-      h: 0.6,
-      fontSize: 16,
-      fontFace: "Microsoft JhengHei",
-      color: t.light,
-      align: "left",
-    });
+    if (metaParts.length > 0) {
+      slide.addText(metaParts.join("  ·  "), {
+        x: MARGIN,
+        y: 3.85,
+        w: 9.5,
+        h: 0.6,
+        fontSize: 16,
+        fontFace: "Microsoft JhengHei",
+        color: t.light,
+        align: "left",
+      });
+    }
   }
 
-  // Slide number
   addSlideNumber(slide, slideNum, t);
 }
 
-/* ── ICON LIST SLIDE (objectives / materials / assessment) ── */
-function createIconListSlide(pptx, opts) {
-  const { title, items, iconType, theme: t } = opts;
+/* ── CONTENT SLIDE (unified) ── */
+function createContentSlide(pptx, slideData, t, slideNum) {
   const slide = pptx.addSlide();
   slide.background = { fill: t.bgContent };
 
@@ -328,8 +284,8 @@ function createIconListSlide(pptx, opts) {
     fill: { color: t.primary },
   });
 
-  // Title
-  slide.addText(title, {
+  // Slide title
+  slide.addText(slideData.title, {
     x: MARGIN,
     y: 0.45,
     w: SLIDE_W - 2 * MARGIN,
@@ -340,30 +296,53 @@ function createIconListSlide(pptx, opts) {
     bold: true,
   });
 
-  // Items grid
+  // Detect content type
+  const items = detectListItems(slideData.content);
+
+  if (items.length > 0) {
+    // Render as list with visual indicators
+    renderList(slide, items, t);
+  } else if (slideData.content) {
+    // Render as plain text
+    slide.addText(slideData.content, {
+      x: MARGIN,
+      y: 1.5,
+      w: SLIDE_W - 2 * MARGIN,
+      h: 5.5,
+      fontSize: 16,
+      fontFace: "Microsoft JhengHei",
+      color: t.textDark,
+      lineSpacingMultiple: 1.6,
+      valign: "top",
+    });
+  }
+
+  addSlideNumber(slide, slideNum, t);
+}
+
+/* ── LIST RENDERER (number circles + bullet dots) ── */
+function renderList(slide, items, t) {
   const startY = 1.4;
-  const itemH = 0.85;
+  const itemH = 0.9;
   const maxItems = Math.min(items.length, 6);
 
   items.slice(0, maxItems).forEach((item, idx) => {
     const y = startY + idx * itemH;
 
-    if (iconType === "number") {
-      // Number circle
-      const circleX = MARGIN;
-      const circleSize = 0.52;
+    if (item.type === "number") {
+      // Numbered circle
       slide.addShape(pptx.shapes.OVAL, {
-        x: circleX,
+        x: MARGIN,
         y: y + 0.08,
-        w: circleSize,
-        h: circleSize,
+        w: 0.52,
+        h: 0.52,
         fill: { color: t.primary },
       });
       slide.addText(String(idx + 1), {
-        x: circleX,
+        x: MARGIN,
         y: y + 0.08,
-        w: circleSize,
-        h: circleSize,
+        w: 0.52,
+        h: 0.52,
         fontSize: 16,
         fontFace: "Calibri",
         color: t.white,
@@ -373,9 +352,8 @@ function createIconListSlide(pptx, opts) {
       });
     } else {
       // Bullet dot
-      const dotX = MARGIN;
       slide.addShape(pptx.shapes.OVAL, {
-        x: dotX,
+        x: MARGIN + 0.16,
         y: y + 0.23,
         w: 0.2,
         h: 0.2,
@@ -384,7 +362,7 @@ function createIconListSlide(pptx, opts) {
     }
 
     // Item text
-    slide.addText(item, {
+    slide.addText(item.text, {
       x: MARGIN + 0.75,
       y: y,
       w: SLIDE_W - 2 * MARGIN - 0.75,
@@ -396,7 +374,6 @@ function createIconListSlide(pptx, opts) {
     });
   });
 
-  // If more items than fit, add "還有 X 項"
   if (items.length > maxItems) {
     slide.addText(`還有 ${items.length - maxItems} 項…`, {
       x: MARGIN + 0.75,
@@ -409,110 +386,6 @@ function createIconListSlide(pptx, opts) {
       italic: true,
     });
   }
-
-  addSlideNumber(slide, opts.slideNum, t);
-}
-
-/* ── PROCEDURE SLIDE ── */
-function createProcedureSlide(pptx, step, t, slideNum, stepIdx, totalSteps) {
-  const slide = pptx.addSlide();
-  slide.background = { fill: t.bgContent };
-
-  // Top accent bar
-  slide.addShape(pptx.shapes.RECTANGLE, {
-    x: 0,
-    y: 0,
-    w: SLIDE_W,
-    h: 0.08,
-    fill: { color: t.primary },
-  });
-
-  // Section label
-  slide.addText("教學流程", {
-    x: MARGIN,
-    y: 0.3,
-    w: 4,
-    h: 0.4,
-    fontSize: 13,
-    fontFace: "Microsoft JhengHei",
-    color: t.textMuted,
-    bold: false,
-  });
-
-  // Large step number
-  slide.addText(`0${stepIdx}`, {
-    x: MARGIN,
-    y: 0.8,
-    w: 1.2,
-    h: 1.2,
-    fontSize: 54,
-    fontFace: "Calibri",
-    color: t.primary,
-    bold: true,
-    align: "center",
-    valign: "middle",
-  });
-
-  // Vertical accent line
-  slide.addShape(pptx.shapes.RECTANGLE, {
-    x: MARGIN + 1.45,
-    y: 0.8,
-    w: 0.04,
-    h: 5.0,
-    fill: { color: t.secondary, transparency: 40 },
-  });
-
-  // Step title
-  slide.addText(step.title, {
-    x: MARGIN + 1.8,
-    y: 0.8,
-    w: SLIDE_W - MARGIN - 1.8 - MARGIN,
-    h: 0.75,
-    fontSize: 24,
-    fontFace: "Microsoft JhengHei",
-    color: t.primary,
-    bold: true,
-  });
-
-  // Step content
-  if (step.content) {
-    slide.addText(step.content, {
-      x: MARGIN + 1.8,
-      y: 1.7,
-      w: SLIDE_W - MARGIN - 1.8 - MARGIN,
-      h: 3.8,
-      fontSize: 15,
-      fontFace: "Microsoft JhengHei",
-      color: t.textDark,
-      lineSpacingMultiple: 1.5,
-      valign: "top",
-    });
-  }
-
-  // Progress bar at bottom
-  const barY = 6.85;
-  const barW = SLIDE_W - 2 * MARGIN;
-  const barH = 0.06;
-  const progress = stepIdx / totalSteps;
-
-  // Background bar
-  slide.addShape(pptx.shapes.RECTANGLE, {
-    x: MARGIN,
-    y: barY,
-    w: barW,
-    h: barH,
-    fill: { color: "E2E8F0" },
-  });
-  // Filled portion
-  slide.addShape(pptx.shapes.RECTANGLE, {
-    x: MARGIN,
-    y: barY,
-    w: barW * progress,
-    h: barH,
-    fill: { color: t.primary },
-  });
-
-  addSlideNumber(slide, slideNum, t);
 }
 
 /* ── END SLIDE ── */
@@ -606,6 +479,13 @@ module.exports = async (req, res) => {
 
     // Parse
     const parsed = parseLessonPlan(lessonPlan);
+
+    if (parsed.slides.length === 0) {
+      return res.status(400).json({
+        error: "未偵測到任何 Slide。請確保教案包含至少一個 `## Slide 標題`。",
+        detail: "No slides detected. Add `## Slide Title` sections.",
+      });
+    }
 
     // Generate PPTX
     const pptx = generatePptx(parsed, theme);

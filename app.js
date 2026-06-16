@@ -18,68 +18,105 @@ const btnClear = document.getElementById("btnClear");
 const btnCopyExample = document.getElementById("btnCopyExample");
 const btnCopyPrompt = document.getElementById("btnCopyPrompt");
 
-// ── AI Prompt Text ──
-const AI_PROMPT = `你是一個專業的教案撰寫助手。請根據以下要求，生成一份結構化的教案，**必須嚴格使用以下 Markdown 格式**：
+// ── AI Prompt (for slide-by-slide format) ──
+const AI_PROMPT = `你是一個專業的教案簡報生成助手。請根據用戶提供的主題，生成一份可以直接轉換為 PowerPoint 的結構化 Markdown。
 
-# 教學主題：[在此填寫主題名稱]
+**格式規則（必須嚴格遵守）：**
 
-## 基本資訊
-- **科目**：[科目名稱]
+1. 第一行使用 \`# 主題名稱\` 作為整份簡報的標題
+2. 每個 \`## \` 開頭的行代表一張新 Slide
+3. 第一個 \`## \` 是封面 Slide，可在內容中使用 \`- **key**：value\` 格式加入基本資訊（科目、年級、時間等）
+4. 後續每個 \`## \` 都是一張內容 Slide，標題後面可以寫段落文字
+5. 如需顯示列表，使用 \`1. \` （編號列表）或 \`- \` （項目符號列表），系統會自動加上精美設計
+
+**格式範例：**
+
+\`\`\`
+# 教學主題：[主題名稱]
+
+## 封面 — [主題名稱]
+- **科目**：[科目]
 - **年級**：[年級]
-- **時間**：[分鐘數] 分鐘
-- **課題**：[課題名稱]
+- **時間**：[分鐘] 分鐘
+
+## [Slide 標題]
+[內容段落…]
+
+## [Slide 標題]
+1. [列表項目一]
+2. [列表項目二]
+3. [列表項目三]
+
+## [Slide 標題]
+- [項目符號一]
+- [項目符號二]
+\`\`\`
+
+**注意事項：**
+- 每個 \`## \` 就是一張 Slide，請按你想要的簡報順序排列
+- 不要使用 \`### \` 或其他層級的標題
+- 列表（\`1. \` 或 \`- \`）會被自動美化為帶圖標的設計
+- 非列表的內容會以段落文字形式顯示
+- 輸出的簡報會自動在最後加上「謝謝」結尾頁`;
+
+// ── Example lesson plan ──
+const EXAMPLE = `# 教學主題：唐朝盛世
+
+## 封面 — 唐朝盛世
+- **科目**：中國歷史
+- **年級**：中二
+- **時間**：40 分鐘
 
 ## 教學目標
-1. [目標一]
-2. [目標二]
-3. [目標三]
+1. 了解唐朝建立的歷史背景
+2. 分析貞觀之治的特點與影響
+3. 培養學生對歷史的批判思考能力
 
 ## 教學資源
-- [資源一]
-- [資源二]
-- [資源三]
+- 教科書第三章
+- 唐朝疆域圖
+- 多媒體簡報
+- 工作紙
 
-## 教學流程
+## 課堂導入（5 分鐘）
+教師提問：「你心中最強盛的朝代是哪一個？」
+引導學生思考並分享，帶出唐朝的主題。
 
-### [導入活動名稱]（[分鐘] 分鐘）
-[詳細描述導入活動的內容、教師行為和學生行為]
+## 唐朝建立背景（10 分鐘）
+教師講解隋末農民起義、李淵起兵、
+以及唐朝建立的歷史過程。
 
-### [發展活動名稱]（[分鐘] 分鐘）
-[詳細描述發展活動的內容、教師行為和學生行為]
+## 小組討論 — 貞觀之治（10 分鐘）
+學生分 4 組，討論以下政策：
+- 均田制
+- 科舉制
+- 三省六部制
+- 對外政策
 
-### [總結活動名稱]（[分鐘] 分鐘）
-[詳細描述總結活動的內容]
-
-## 評估方法
-- [評估方式一]
-- [評估方式二]
-
----
-
-格式規則：
-- 必須使用 \`#\` 作為標題、\`##\` 作為區段標題、\`###\` 作為教學流程的子步驟
-- 每個教學流程步驟必須包含時間
-- 使用 \`- **key**：value\` 格式表示基本資訊
-- 使用數字列表 \`1. \` 表示教學目標
-- 使用 \`- \` 表示一般列表項
-- 不要加入任何其他格式或多餘的說明文字`;
+## 總結與評估（10 分鐘）
+- 各組匯報討論成果
+- 教師總結本課重點
+- 完成工作紙`;
 
 // ── Format detection ──
 function checkFormat(text) {
   if (text.trim().length < 10) return { valid: false, hint: "" };
 
   const hasTitle = /^#\s+/m.test(text);
-  const hasH2 = /^##\s+/m.test(text);
-  const hasList = /^[-*]\s+|^\d+[.)]\s+/m.test(text);
-  const hasKeyValue = /\*\*[^*]+\*\*[：:]/.test(text);
+  const hasSlides = /^##\s+/m.test(text);
+  // Count slide count
+  const slideCount = (text.match(/^##\s+/gm) || []).length;
 
-  if (hasTitle && hasH2 && hasList) {
-    return { valid: true, hint: "✅ 格式正確" };
+  if (hasTitle && hasSlides && slideCount >= 2) {
+    return { valid: true, hint: `✅ 格式正確 — 偵測到 ${slideCount} 張 Slide` };
   }
-  if (hasTitle || hasH2) {
-    return { valid: false, hint: "⚠️ 格式不完整，建議參考下方指引" };
+  if (hasSlides && slideCount >= 1) {
+    return { valid: false, hint: "⚠️ 缺少主題標題（# 主題名稱）" };
   }
-  return { valid: false, hint: "💡 提示：請使用結構化 Markdown 格式" };
+  if (hasTitle && hasSlides) {
+    return { valid: false, hint: "⚠️ 需要至少 2 張 Slide（封面 + 內容）" };
+  }
+  return { valid: false, hint: "💡 使用 `## Slide 標題` 分隔每張 Slide" };
 }
 
 // ── Update UI on input ──
@@ -98,40 +135,7 @@ function updateUI() {
 
 // ── Load example ──
 function loadExample() {
-  input.value = `# 教學主題：唐朝盛世
-
-## 基本資訊
-- **科目**：中國歷史
-- **年級**：中二
-- **時間**：40 分鐘
-- **課題**：唐朝的建立與貞觀之治
-
-## 教學目標
-1. 了解唐朝建立的歷史背景
-2. 分析貞觀之治的特點與影響
-3. 培養學生對歷史的批判思考能力
-
-## 教學資源
-- 教科書第三章
-- 唐朝疆域圖
-- 多媒體簡報
-- 工作紙
-
-## 教學流程
-
-### 導入活動（5 分鐘）
-教師提問：「你心中最強盛的朝代是哪一個？」引導學生思考並分享，帶出唐朝的主題。
-
-### 發展活動（25 分鐘）
-教師講解唐朝建立背景（10 分鐘），然後進行小組討論貞觀之治的政策（10 分鐘），最後各組匯報及教師總結（5 分鐘）。
-
-### 總結活動（10 分鐘）
-完成工作紙，鞏固所學內容。教師總結本課重點。
-
-## 評估方法
-- 課堂提問及回應
-- 小組討論表現
-- 工作紙完成情況`;
+  input.value = EXAMPLE;
   updateUI();
   input.focus();
 }

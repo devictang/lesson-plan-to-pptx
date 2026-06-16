@@ -59,12 +59,18 @@ vercel dev
 
 📋 完整格式指引及 AI 指令：[PROMPT_INSTRUCTION.md](./PROMPT_INSTRUCTION.md)
 
-## 🎨 主題預覽
+## 🎨 8 款主題（來自真實 Design Systems）
 
-| 海洋藍 | 森林綠 | 暖橙紅 |
-|--------|--------|--------|
-| 專業學術風格 | 清新自然風格 | 溫暖活力風格 |
-| Navy + Teal + Gold | Forest + Moss + Tan | Coral + Rose + Navy |
+| 主題 | 來源 | Accent | 風格 |
+|------|------|--------|------|
+| 海洋學術 | — | `#065A82` | 專業沉穩 |
+| Notion 文青 | Notion | `#E16259` | 溫暖人文 |
+| Stripe 藍紫 | Stripe | `#533AFD` | 專業科技 |
+| Linear 極黑 | Linear | `#5E6AD2` | 極簡暗黑 |
+| Apple 純白 | Apple | `#0071E3` | 簡約留白 |
+| Airbnb 暖橙 | Airbnb | `#FF385C` | 溫暖活力 |
+| 森林自然 | — | `#2C5F2D` | 清新平靜 |
+| 日落暖暮 | — | `#B85042` | 濃郁溫度 |
 
 ## 🏗 技術棧
 

@@ -1,0 +1,18 @@
+{
+  "name": "lesson-plan-to-pptx",
+  "version": "1.0.0",
+  "description": "Convert structured lesson plans into beautifully designed PowerPoint presentations",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  },
+  "devDependencies": {
+    "vercel": "^34.0.0"
+  },
+  "keywords": ["lesson-plan", "pptx", "education", "teaching"],
+  "license": "MIT"
+}

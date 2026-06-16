@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="將教案一鍵轉換成精美設計的 PowerPoint 簡報" />
+  <title>教案 → PPTX | Lesson Plan to Slides</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect rx='6' width='32' height='32' fill='%23065A82'/><text x='16' y='23' text-anchor='middle' fill='white' font-size='20' font-family='sans-serif'>📝</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ── NAV ── -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="nav-logo">📝</span>
+        <span class="nav-title">教案轉 PPTX</span>
+      </a>
+      <div class="nav-links">
+        <a href="#guide" class="nav-link">格式指引</a>
+        <a href="https://github.com" target="_blank" rel="noopener" class="nav-link nav-link-gh">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h1 class="hero-title">教案 → 精美簡報<br /><span class="hero-highlight">一鍵生成</span></h1>
+      <p class="hero-sub">貼上你的教案，選擇主題風格，即刻下載專業設計的 PowerPoint 檔案</p>
+    </div>
+  </section>
+
+  <!-- ── MAIN TOOL ── -->
+  <main class="main">
+    <div class="card">
+      <!-- Textarea -->
+      <div class="field">
+        <div class="field-header">
+          <label for="input" class="field-label">📋 貼上教案內容</label>
+          <div class="field-actions">
+            <button type="button" id="btnExample" class="btn-ghost">載入範例</button>
+            <button type="button" id="btnClear" class="btn-ghost">清除</button>
+          </div>
+        </div>
+        <textarea
+          id="input"
+          class="textarea"
+          placeholder="在此貼上你的教案內容…&#10;&#10;支援格式指引中的結構化 Markdown 格式&#10;不確定格式？點擊上方「載入範例」查看"
+          rows="14"
+          spellcheck="false"
+        ></textarea>
+        <div class="field-footer">
+          <span id="charCount" class="char-count">0 字</span>
+          <span id="formatHint" class="format-hint"></span>
+        </div>
+      </div>
+
+      <!-- Theme selector -->
+      <div class="field">
+        <label class="field-label">🎨 選擇主題風格</label>
+        <div class="theme-grid" id="themeGrid">
+          <label class="theme-card" data-theme="ocean">
+            <input type="radio" name="theme" value="ocean" checked />
+            <span class="theme-swatch" style="--primary:#065A82;--secondary:#1C7293;--accent:#F0A500"></span>
+            <span class="theme-name">海洋藍</span>
+            <span class="theme-desc">專業學術</span>
+          </label>
+          <label class="theme-card" data-theme="forest">
+            <input type="radio" name="theme" value="forest" />
+            <span class="theme-swatch" style="--primary:#2C5F2D;--secondary:#558B2F;--accent:#D4A574"></span>
+            <span class="theme-name">森林綠</span>
+            <span class="theme-desc">清新自然</span>
+          </label>
+          <label class="theme-card" data-theme="coral">
+            <input type="radio" name="theme" value="coral" />
+            <span class="theme-swatch" style="--primary:#B85042;--secondary:#D4796A;--accent:#2F3C7E"></span>
+            <span class="theme-name">暖橙紅</span>
+            <span class="theme-desc">溫暖活力</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Generate button -->
+      <button id="btnGenerate" class="btn-primary" disabled>
+        <span class="btn-content">
+          <span class="btn-icon">🚀</span>
+          <span class="btn-text">生成 PPTX</span>
+        </span>
+        <span class="btn-loader" hidden>
+          <span class="spinner"></span>
+          <span>正在生成中…</span>
+        </span>
+      </button>
+
+      <!-- Status messages -->
+      <div id="status" class="status" hidden></div>
+
+      <!-- Download area -->
+      <div id="downloadArea" class="download-area" hidden>
+        <div class="download-card">
+          <span class="download-icon">✅</span>
+          <div class="download-info">
+            <strong>簡報已生成！</strong>
+            <span id="downloadFilename"></span>
+          </div>
+          <a id="downloadLink" class="btn-download" href="#" download>
+            ⬇ 下載 PPTX
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── FORMAT GUIDE ── -->
+  <section id="guide" class="guide-section">
+    <div class="guide-inner">
+      <h2 class="guide-title">📖 教案格式指引</h2>
+      <p class="guide-desc">
+        請使用以下結構化 Markdown 格式來撰寫教案。你可以將<a href="#ai-prompt">下方的 AI 指令</a>複製給 ChatGPT 或其他 AI 工具，讓 AI 幫你生成符合格式的教案。
+      </p>
+
+      <div class="example-block">
+        <div class="example-header">
+          <span>📋 格式範例</span>
+          <button type="button" id="btnCopyExample" class="btn-ghost-sm">複製</button>
+        </div>
+        <pre class="example-code" id="formatExample"><code># 教學主題：唐朝盛世
+
+## 基本資訊
+- **科目**：中國歷史
+- **年級**：中二
+- **時間**：40 分鐘
+- **課題**：唐朝的建立與貞觀之治
+
+## 教學目標
+1. 了解唐朝建立的歷史背景
+2. 分析貞觀之治的特點與影響
+3. 培養學生對歷史的批判思考能力
+
+## 教學資源
+- 教科書第三章
+- 唐朝疆域圖
+- 多媒體簡報
+- 工作紙
+
+## 教學流程
+
+### 導入活動（5 分鐘）
+教師提問：「你心中最強盛的朝代是哪一個？」引導學生思考並分享，帶出唐朝的主題。
+
+### 發展活動（25 分鐘）
+教師講解唐朝建立背景（10 分鐘），然後進行小組討論貞觀之治的政策（10 分鐘），最後各組匯報及教師總結（5 分鐘）。
+
+### 總結活動（10 分鐘）
+完成工作紙，鞏固所學內容。教師總結本課重點。
+
+## 評估方法
+- 課堂提問及回應
+- 小組討論表現
+- 工作紙完成情況</code></pre>
+      </div>
+
+      <!-- AI Prompt -->
+      <div class="prompt-block" id="ai-prompt">
+        <div class="prompt-header">
+          <span>🤖 AI 生成指令</span>
+          <span class="prompt-badge">複製給 ChatGPT / Claude 使用</span>
+        </div>
+        <p class="prompt-desc">
+          將以下指令貼給任何 AI 助手，即可自動生成符合格式的教案內容：
+        </p>
+        <div class="prompt-box">
+          <button type="button" id="btnCopyPrompt" class="btn-ghost-sm prompt-copy">📋 複製指令</button>
+          <pre class="prompt-code" id="aiPromptText"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <p>教案轉 PPTX · 開源工具 · 用於教育用途</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

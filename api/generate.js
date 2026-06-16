@@ -301,7 +301,7 @@ function createContentSlide(pptx, slideData, t, slideNum) {
 
   if (items.length > 0) {
     // Render as list with visual indicators
-    renderList(slide, items, t);
+    renderList(slide, items, t, pptx);
   } else if (slideData.content) {
     // Render as plain text
     slide.addText(slideData.content, {
@@ -321,7 +321,7 @@ function createContentSlide(pptx, slideData, t, slideNum) {
 }
 
 /* ── LIST RENDERER (number circles + bullet dots) ── */
-function renderList(slide, items, t) {
+function renderList(slide, items, t, pptx) {
   const startY = 1.4;
   const itemH = 0.9;
   const maxItems = Math.min(items.length, 6);

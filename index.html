@@ -145,7 +145,8 @@
     <div class="guide-inner">
       <h2 class="guide-title">📖 教案格式指引</h2>
       <p class="guide-desc">
-        每個 <code>## </code> 代表一張 Slide。第一個 <code>## </code> 為封面，後續每個 <code>## </code> 為內容頁。可將<a href="#ai-prompt">下方的 AI 指令</a>複製給 ChatGPT，生成符合格式的內容。
+        每個 <code>## </code> 代表一張 Slide。系統自動偵測 7 種佈局。<br />
+        <strong>使用方式：</strong>先同 AI 討論教案內容，然後將<a href="#ai-prompt">下方的格式附錄</a> append 喺你嘅 instruction 最後，AI 就會輸出符合 parser 嘅格式。
       </p>
 
       <div class="example-block">
@@ -178,6 +179,13 @@
 > 植物係地球上最重要嘅生產者。
 > — 生物學教科書
 
+## 導入活動 || 總結活動
+- 播放影片提問引導
+- 學生自由分享
+---
+- 完成工作紙
+- 教師總結重點
+
 ## ---
 總結
 
@@ -190,11 +198,11 @@
       <!-- AI Prompt -->
       <div class="prompt-block" id="ai-prompt">
         <div class="prompt-header">
-          <span>🤖 AI 生成指令</span>
-          <span class="prompt-badge">複製給 ChatGPT / Claude 使用</span>
+          <span>🤖 格式附錄（Format Appendix）</span>
+          <span class="prompt-badge">Append 喺你嘅 instruction 最後</span>
         </div>
         <p class="prompt-desc">
-          將以下指令貼給 ChatGPT 或任何 AI 助手，AI 會按照每張 Slide 的結構生成教案內容：
+          將以下格式附錄 <strong>append</strong> 喺你畀 AI 嘅 instruction 最後（唔好單獨使用）。AI 會跟呢個格式輸出，直接貼上網站即可生成簡報：
         </p>
         <div class="prompt-box">
           <button type="button" id="btnCopyPrompt" class="btn-ghost-sm prompt-copy">📋 複製指令</button>

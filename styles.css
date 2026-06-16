@@ -536,7 +536,7 @@ body {
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
 }
 
-/* ── Guide Section ── */
+/* ── Guide / Wizard Section ── */
 .guide-section {
   max-width: 860px;
   margin: 0 auto 64px;
@@ -544,123 +544,249 @@ body {
 }
 
 .guide-title {
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 8px;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 4px;
 }
 
-.guide-desc {
+.guide-subtitle {
   font-size: 15px;
   color: var(--color-text-muted);
-  margin-bottom: 28px;
-  line-height: 1.7;
-}
-
-.guide-desc a {
-  color: var(--color-primary);
-  font-weight: 500;
-}
-
-/* ── Example Block ── */
-.example-block {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
   margin-bottom: 32px;
 }
 
-.example-header {
+/* Step Cards */
+.step-card {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 18px;
-  background: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.example-code {
-  padding: 20px 18px;
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.8;
-  color: var(--color-text);
-  background: #FAFBFC;
-  overflow-x: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-/* ── Prompt Block ── */
-.prompt-block {
+  gap: 18px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
-  padding: 24px;
+  padding: 22px 20px;
+  margin-bottom: 14px;
+  transition: border-color var(--transition);
 }
 
-.prompt-header {
+.step-card:hover {
+  border-color: var(--color-primary-light);
+}
+
+.step-num {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 700;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 4px;
-  font-size: 16px;
+  justify-content: center;
+}
+
+.step-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-title {
+  font-size: 17px;
   font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--color-text);
 }
 
-.prompt-badge {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-primary);
-  background: rgba(6, 90, 130, 0.08);
-  padding: 3px 10px;
-  border-radius: 20px;
-}
-
-.prompt-desc {
+.step-desc {
   font-size: 14px;
   color: var(--color-text-muted);
-  margin-bottom: 16px;
+  line-height: 1.65;
+  margin-bottom: 10px;
 }
 
-.prompt-box {
+.step-hint {
+  font-size: 12px;
+  color: var(--color-text-light);
+  margin-left: 8px;
+}
+
+.step-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.step-list {
+  margin: 0 0 10px 18px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+}
+
+.step-list kbd {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+/* Step 2 — example instruction box */
+.step-example-box {
   position: relative;
-  background: #1E293B;
+  background: #F0F4FF;
+  border: 1px solid #D0DBF5;
   border-radius: var(--radius);
-  overflow: hidden;
+  padding: 14px 16px;
+  margin-top: 6px;
 }
 
-.prompt-copy {
+.step-example-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 6px;
+}
+
+.step-example-text {
+  display: block;
+  font-family: var(--font-tc);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.step-copy-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 2;
-  color: #CBD5E1 !important;
-  border-color: #475569 !important;
 }
 
-.prompt-copy:hover {
-  color: #FFFFFF !important;
-  border-color: #94A3B8 !important;
-  background: rgba(255,255,255,0.08) !important;
+/* Step 3 — details/pre */
+.step-details {
+  margin-top: 12px;
 }
 
-.prompt-code {
-  padding: 48px 20px 20px;
-  margin: 0;
-  font-family: var(--font-mono);
+.step-details summary {
   font-size: 13px;
-  line-height: 1.8;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.step-pre {
+  background: #1E293B;
   color: #E2E8F0;
+  padding: 16px;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
   overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-word;
+  margin-top: 8px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+/* Buttons in steps */
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  font-family: var(--font-tc);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: all var(--transition);
+}
+
+.btn-outline:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-accent {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: #FFFFFF;
+  font-family: var(--font-tc);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-accent:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Collapsed format reference */
+.ref-details {
+  margin-top: 32px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+}
+
+.ref-details > summary {
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ref-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ref-item {
+  padding: 8px 10px;
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+
+.ref-item strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--color-text);
+}
+
+.ref-item code {
+  font-size: 12px;
+  color: var(--color-primary);
+  background: none;
+  padding: 0;
+}
+
+.ref-sub-details {
+  margin-top: 10px;
+}
+
+.ref-sub-details summary {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-weight: 500;
 }
 
 /* ── Footer ── */

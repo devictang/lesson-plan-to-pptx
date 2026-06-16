@@ -13,8 +13,8 @@ const downloadLink = document.getElementById("downloadLink");
 const downloadFilename = document.getElementById("downloadFilename");
 const btnExample = document.getElementById("btnExample");
 const btnClear = document.getElementById("btnClear");
-const btnCopyExample = document.getElementById("btnCopyExample");
 const btnCopyPrompt = document.getElementById("btnCopyPrompt");
+const btnCopyInstruction = document.getElementById("btnCopyInstruction");
 
 /* ── AI Format Appendix (append to YOUR instruction) ── */
 const AI_PROMPT = `**輸出格式要求（必須嚴格遵守）：**
@@ -223,18 +223,23 @@ input.addEventListener("input", updateUI);
 btnGenerate.addEventListener("click", generatePptx);
 btnExample.addEventListener("click", loadExample);
 btnClear.addEventListener("click", clearInput);
-btnCopyExample.addEventListener("click", async () => {
-  const t = document.getElementById("formatExample").textContent;
-  const ok = await copyToClipboard(t);
-  btnCopyExample.textContent = ok ? "✓ 已複製" : "複製失敗";
-  setTimeout(() => { btnCopyExample.textContent = "複製"; }, 2000);
+
+btnCopyInstruction.addEventListener("click", async () => {
+  const text = "幫我設計一個中三生物科關於光合作用嘅教案，40 分鐘課時，包含導入、核心教學、小組討論同總結。";
+  const ok = await copyToClipboard(text);
+  btnCopyInstruction.textContent = ok ? "✓ 已複製" : "複製失敗";
+  setTimeout(() => { btnCopyInstruction.textContent = "📋 複製"; }, 2000);
 });
+
 const aiPromptEl = document.getElementById("aiPromptText");
+const formatRefEl = document.getElementById("formatExampleRef");
 aiPromptEl.textContent = AI_PROMPT;
+formatRefEl.textContent = EXAMPLE;
+
 btnCopyPrompt.addEventListener("click", async () => {
   const ok = await copyToClipboard(AI_PROMPT);
   btnCopyPrompt.textContent = ok ? "✓ 已複製" : "複製失敗";
-  setTimeout(() => { btnCopyPrompt.textContent = "📋 複製指令"; }, 2000);
+  setTimeout(() => { btnCopyPrompt.textContent = "📋 複製格式要求"; }, 2000);
 });
 document.addEventListener("keydown", (e) => {
   if ((e.ctrlKey||e.metaKey) && e.key==="Enter") {

@@ -140,81 +140,96 @@
     </div>
   </main>
 
-  <!-- ── FORMAT GUIDE ── -->
+  <!-- ── HOW TO USE (Wizard) ── -->
   <section id="guide" class="guide-section">
     <div class="guide-inner">
-      <h2 class="guide-title">📖 教案格式指引</h2>
-      <p class="guide-desc">
-        每個 <code>## </code> 代表一張 Slide。系統自動偵測 7 種佈局。<br />
-        <strong>使用方式：</strong>先同 AI 討論教案內容，然後將<a href="#ai-prompt">下方的格式附錄</a> append 喺你嘅 instruction 最後，AI 就會輸出符合 parser 嘅格式。
-      </p>
+      <h2 class="guide-title">📖 使用教學</h2>
+      <p class="guide-subtitle">跟住以下 5 個步驟，唔使 3 分鐘就可以將教案變成 PowerPoint</p>
 
-      <div class="example-block">
-        <div class="example-header">
-          <span>📋 格式範例</span>
-          <button type="button" id="btnCopyExample" class="btn-ghost-sm">複製</button>
-        </div>
-        <pre class="example-code" id="formatExample"><code># 教學主題：光合作用
-
-## 封面 — 光合作用
-- **科目**：生物科
-- **年級**：中三
-- **時間**：40 分鐘
-
-## 📋 教學目標
-1. 說明光合作用的定義及化學方程式
-2. 辨識光合作用所需的條件與產物
-3. 理解光合作用對生態系統的重要性
-
-## ---
-認識光合作用
-
-## 📖 咩係光合作用？
-光合作用係植物利用陽光、二氧化碳同水，喺葉綠體入面製造葡萄糖同氧氣嘅過程。
-
-## 📊 光合作用方程式
-| 原料 | 條件 | 產物 |
-|------|------|------|
-| 二氧化碳 + 水 | 光 + 葉綠體 | 葡萄糖 + 氧氣 |
-| 6CO₂ + 6H₂O | 光合作用 | C₆H₁₂O₆ + 6O₂
-
-## 💬 專家點講
-> 植物係地球上最重要嘅生產者。
-> — 生物學教科書
-
-## ---
-課堂活動
-
-## ⚖️ 導入活動 || 總結活動
-- 播放植物生長快鏡影片
-- 提問引導學生思考
----
-- 完成工作紙鞏固所學
-- 教師總結本課重點
-
-## ---
-課堂數據
-
-## 📈 本課統計
-- **課時**：40 分鐘
-- **實驗次數**：3 次
-- **小組數量**：4 組</code></pre>
-      </div>
-
-      <!-- AI Prompt -->
-      <div class="prompt-block" id="ai-prompt">
-        <div class="prompt-header">
-          <span>🤖 格式附錄（Format Appendix）</span>
-          <span class="prompt-badge">Append 喺你嘅 instruction 最後</span>
-        </div>
-        <p class="prompt-desc">
-          將以下格式附錄 <strong>append</strong> 喺你畀 AI 嘅 instruction 最後（唔好單獨使用）。AI 會跟呢個格式輸出，直接貼上網站即可生成簡報：
-        </p>
-        <div class="prompt-box">
-          <button type="button" id="btnCopyPrompt" class="btn-ghost-sm prompt-copy">📋 複製指令</button>
-          <pre class="prompt-code" id="aiPromptText"></pre>
+      <!-- Step 1 -->
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3 class="step-title">打開 AI 工具</h3>
+          <p class="step-desc">用你嘅手機或電腦瀏覽器，打開以下任何一個免費 AI：</p>
+          <div class="step-actions">
+            <a href="https://chat.deepseek.com" target="_blank" rel="noopener" class="btn-outline">🔗 DeepSeek</a>
+            <a href="https://gemini.google.com" target="_blank" rel="noopener" class="btn-outline">🔗 Gemini</a>
+            <span class="step-hint">免費 · 唔使安裝 · 可以直接用</span>
+          </div>
         </div>
       </div>
+
+      <!-- Step 2 -->
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3 class="step-title">同 AI 討論你嘅教案</h3>
+          <p class="step-desc">喺 AI 嘅對話框，用廣東話或者普通話講出你想要嘅教案：</p>
+          <div class="step-example-box">
+            <div class="step-example-label">💡 你可以咁樣同 AI 講：</div>
+            <code class="step-example-text">幫我設計一個中三生物科關於光合作用嘅教案，40 分鐘課時，包含導入、核心教學、小組討論同總結。</code>
+            <button type="button" id="btnCopyInstruction" class="btn-ghost-sm step-copy-btn">📋 複製</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3 class="step-title">貼上格式要求</h3>
+          <p class="step-desc">撳下面嘅「複製格式要求」掣，然後 <strong>貼喺你啱啱嗰段文字嘅最後面</strong>（唔好覆蓋你寫嘅內容）。AI 就會跟住格式輸出。</p>
+          <button type="button" id="btnCopyPrompt" class="btn-accent">📋 複製格式要求</button>
+          <details class="step-details">
+            <summary>📝 預覽格式要求內容</summary>
+            <pre class="step-pre" id="aiPromptText"></pre>
+          </details>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3 class="step-title">複製 AI 嘅輸出</h3>
+          <p class="step-desc">AI 會回覆一個結構化嘅內容。喺 AI 嘅回覆入面：</p>
+          <ul class="step-list">
+            <li>電腦：撳 <kbd>Ctrl</kbd> + <kbd>A</kbd> 全選，再撳 <kbd>Ctrl</kbd> + <kbd>C</kbd> 複製</li>
+            <li>手機：長按 AI 回覆 → 全選 → 複製</li>
+          </ul>
+          <p class="step-hint">只複製 AI 輸出嘅 Markdown 內容（由 <code># 教學主題</code> 開始嗰部分），唔好包含 AI 嘅解釋文字。</p>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3 class="step-title">貼上網站 → 生成 PowerPoint</h3>
+          <p class="step-desc">返嚟呢個網站，將複製咗嘅內容貼上去上面嘅大輸入框，選擇一個你鍾意嘅主題顏色，然後撳「生成 PPTX」。</p>
+          <a href="#input" class="btn-primary" style="display:inline-flex;width:auto;padding:10px 24px;text-decoration:none;">⬆ 返上去貼上內容</a>
+          <span class="step-hint">或者直接碌返上去都得</span>
+        </div>
+      </div>
+
+      <!-- Format Reference (collapsed) -->
+      <details class="ref-details">
+        <summary>📋 7 種 Slide 格式參考</summary>
+        <div class="ref-grid">
+          <div class="ref-item"><strong>封面</strong><code>## 封面 — 主題</code></div>
+          <div class="ref-item"><strong>分隔頁</strong><code>## ---</code></div>
+          <div class="ref-item"><strong>引用頁</strong><code>> 金句</code></div>
+          <div class="ref-item"><strong>統計頁</strong><code>- **標籤**：數值</code></div>
+          <div class="ref-item"><strong>表格頁</strong><code>| A | B |</code></div>
+          <div class="ref-item"><strong>對照頁</strong><code>## 左 || 右</code></div>
+          <div class="ref-item"><strong>內容頁</strong><code>1. 或 - 列表</code></div>
+        </div>
+        <details class="ref-sub-details">
+          <summary>📝 完整格式範例</summary>
+          <pre class="step-pre" id="formatExampleRef"></pre>
+        </details>
+      </details>
     </div>
   </section>
 

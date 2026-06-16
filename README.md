@@ -14,12 +14,12 @@
 
 ### 一鍵部署
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/lesson-plan-to-pptx)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/devictang/lesson-plan-to-pptx)
 
 ### 手動部署
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/lesson-plan-to-pptx.git
+git clone https://github.com/devictang/lesson-plan-to-pptx.git
 cd lesson-plan-to-pptx
 npm install
 vercel --prod

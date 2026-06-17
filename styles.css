@@ -73,7 +73,7 @@ body {
   max-width: 960px;
   margin: 0 auto;
   padding: 0 24px;
-  height: 56px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -82,7 +82,7 @@ body {
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
   color: var(--color-text);
   font-weight: 700;
@@ -90,7 +90,8 @@ body {
 }
 
 .nav-logo {
-  font-size: 22px;
+  display: flex;
+  align-items: center;
   line-height: 1;
 }
 

@@ -398,6 +398,18 @@ body {
   gap: 10px;
 }
 
+@media (max-width: 640px) {
+  .theme-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .theme-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .theme-card {
   position: relative;
   display: flex;

@@ -74,45 +74,65 @@
       <div class="field">
         <label class="field-label">🎨 選擇主題風格</label>
         <div class="theme-grid" id="themeGrid">
-          <label class="theme-card" data-theme="ocean">
-            <input type="radio" name="theme" value="ocean" checked />
-            <span class="theme-swatch" style="--swatch: #065A82"></span>
-            <span class="theme-name">海洋學術</span>
+          <label class="theme-card" data-theme="course-module">
+            <input type="radio" name="theme" value="course-module" checked />
+            <span class="theme-swatch" style="--swatch: #2D7D6E"></span>
+            <span class="theme-name">教學模組 ★</span>
           </label>
-          <label class="theme-card" data-theme="notion">
-            <input type="radio" name="theme" value="notion" />
-            <span class="theme-swatch" style="--swatch: #E16259"></span>
-            <span class="theme-name">Notion 文青</span>
+          <label class="theme-card" data-theme="academic-paper">
+            <input type="radio" name="theme" value="academic-paper" />
+            <span class="theme-swatch" style="--swatch: #1A3A7A"></span>
+            <span class="theme-name">學術論文</span>
           </label>
-          <label class="theme-card" data-theme="stripe">
-            <input type="radio" name="theme" value="stripe" />
-            <span class="theme-swatch" style="--swatch: #533AFD"></span>
-            <span class="theme-name">Stripe 藍紫</span>
+          <label class="theme-card" data-theme="corporate-clean">
+            <input type="radio" name="theme" value="corporate-clean" />
+            <span class="theme-swatch" style="--swatch: #1A56DB"></span>
+            <span class="theme-name">企業彙報</span>
           </label>
-          <label class="theme-card" data-theme="linear">
-            <input type="radio" name="theme" value="linear" />
-            <span class="theme-swatch" style="--swatch: #5E6AD2"></span>
-            <span class="theme-name">Linear 極黑</span>
+          <label class="theme-card" data-theme="minimal-white">
+            <input type="radio" name="theme" value="minimal-white" />
+            <span class="theme-swatch" style="--swatch: #18181B"></span>
+            <span class="theme-name">極簡白</span>
           </label>
-          <label class="theme-card" data-theme="apple">
-            <input type="radio" name="theme" value="apple" />
-            <span class="theme-swatch" style="--swatch: #0071E3"></span>
-            <span class="theme-name">Apple 純白</span>
+          <label class="theme-card" data-theme="swiss-grid">
+            <input type="radio" name="theme" value="swiss-grid" />
+            <span class="theme-swatch" style="--swatch: #E30613"></span>
+            <span class="theme-name">瑞士網格</span>
           </label>
-          <label class="theme-card" data-theme="airbnb">
-            <input type="radio" name="theme" value="airbnb" />
-            <span class="theme-swatch" style="--swatch: #FF385C"></span>
-            <span class="theme-name">Airbnb 暖橙</span>
+          <label class="theme-card" data-theme="editorial-serif">
+            <input type="radio" name="theme" value="editorial-serif" />
+            <span class="theme-swatch" style="--swatch: #8B2F2F"></span>
+            <span class="theme-name">編輯社論</span>
           </label>
-          <label class="theme-card" data-theme="forest">
-            <input type="radio" name="theme" value="forest" />
-            <span class="theme-swatch" style="--swatch: #2C5F2D"></span>
+          <label class="theme-card" data-theme="tech-sharing">
+            <input type="radio" name="theme" value="tech-sharing" />
+            <span class="theme-swatch" style="--swatch: #58A6FF"></span>
+            <span class="theme-name">技術暗色</span>
+          </label>
+          <label class="theme-card" data-theme="pastel-warm">
+            <input type="radio" name="theme" value="pastel-warm" />
+            <span class="theme-swatch" style="--swatch: #E8927C"></span>
+            <span class="theme-name">柔和馬卡龍</span>
+          </label>
+          <label class="theme-card" data-theme="blueprint">
+            <input type="radio" name="theme" value="blueprint" />
+            <span class="theme-swatch" style="--swatch: #FFD700"></span>
+            <span class="theme-name">藍圖工程</span>
+          </label>
+          <label class="theme-card" data-theme="nature-green">
+            <input type="radio" name="theme" value="nature-green" />
+            <span class="theme-swatch" style="--swatch: #2D7A2D"></span>
             <span class="theme-name">森林自然</span>
           </label>
-          <label class="theme-card" data-theme="sunset">
-            <input type="radio" name="theme" value="sunset" />
-            <span class="theme-swatch" style="--swatch: #B85042"></span>
-            <span class="theme-name">日落暖暮</span>
+          <label class="theme-card" data-theme="ocean-blue">
+            <input type="radio" name="theme" value="ocean-blue" />
+            <span class="theme-swatch" style="--swatch: #1A6AA0"></span>
+            <span class="theme-name">海洋冷色</span>
+          </label>
+          <label class="theme-card" data-theme="history-amber">
+            <input type="radio" name="theme" value="history-amber" />
+            <span class="theme-swatch" style="--swatch: #B5392A"></span>
+            <span class="theme-name">歷史琥珀</span>
           </label>
         </div>
       </div>
@@ -223,7 +243,7 @@
 
       <!-- Format Reference (collapsed) -->
       <details class="ref-details">
-        <summary>📋 7 種 Slide 格式參考</summary>
+        <summary>📋 13 種 Slide 格式參考</summary>
         <div class="ref-grid">
           <div class="ref-item"><strong>封面</strong><code>## 封面 — 主題</code></div>
           <div class="ref-item"><strong>分隔頁</strong><code>## ---</code></div>
@@ -231,6 +251,12 @@
           <div class="ref-item"><strong>統計頁</strong><code>- **標籤**：數值</code></div>
           <div class="ref-item"><strong>表格頁</strong><code>| A | B |</code></div>
           <div class="ref-item"><strong>對照頁</strong><code>## 左 || 右</code></div>
+          <div class="ref-item"><strong>概念卡 🆕</strong><code>> **概念**：說明</code></div>
+          <div class="ref-item"><strong>提示框 🆕</strong><code>> 💡 提示文字</code></div>
+          <div class="ref-item"><strong>練習區 🆕</strong><code>> ✏️ 練習</code></div>
+          <div class="ref-item"><strong>選擇題 🆕</strong><code>> ❓ 問題 + A.選項</code></div>
+          <div class="ref-item"><strong>程式碼 🆕</strong><code>```code```</code></div>
+          <div class="ref-item"><strong>逐字稿 🆕</strong><code>> notes：講稿</code></div>
           <div class="ref-item"><strong>內容頁</strong><code>1. 或 - 列表</code></div>
         </div>
         <details class="ref-sub-details">
